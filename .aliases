@@ -9,4 +9,12 @@ build:
 publish:
   command: docker push sebglazebrook/personal-cluster-reverse-proxy:latest
 release:
-  command: echo 'todo'
+  command: |
+    ssh-personal-cluster-master << EOF
+      echo '>> pulling latest'
+      docker pull sebglazebrook/personal-cluster-reverse-proxy:latest
+      echo '>> deleting old'
+      docker rm -f personal-cluster-reverse-proxy
+      echo '>> starting new'
+      docker run -d --net=host --name personal-cluster-reverse-proxy sebglazebrook/personal-cluster-reverse-proxy:latest
+    EOF
